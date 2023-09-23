@@ -1,0 +1,80 @@
+[
+    {
+      "id": 1,
+      "title": "Zapatillas",
+      "description": "Zapatillas deportivas",
+      "price": 123000,
+      "thumbnail": [
+        "https://www.vallejocalzados.com.ar/zapatillas-filament-drifty-hombre-deportivas-2010944800h-7118-light-blue-yellow/p"
+      ],
+      "code": 123597,
+      "stock": 60,
+      "status": true,
+      "category": "Zapatillas"
+    },
+    {
+        "id": 2,
+        "title": "Camiseta",
+        "description": "Camiseta de algodón",
+        "price": 2300,
+      "thumbnail": [
+        ""
+      ],
+      "code": 274667,
+      "stock": 20,
+      "status": true,
+      "category": "Remeras"
+    },
+    {
+        "id": 3,
+        "title": "Pantalón",
+        "description": "Pantalón azul",
+        "price": 66249,
+      "thumbnail": [
+        "https://www.gm7uniformes.com/pantalon-azul-marino/producto.html?p=342&gr=4&ca=25"
+      ],
+      "code": 763283,
+      "stock": 50,
+      "status": true,
+      "category": "Pantalones"
+    },
+    {
+        "id": 4,
+        "title": "remera",
+        "description": "remera azul",
+        "price": 46999,
+      "thumbnail": [
+        "https://warehouse.com.ar/producto/remera-jersey-cardado-azul-marino/"
+      ],
+      "code": 246587,
+      "stock": 30,
+      "status": true,
+      "category": "Remeras"
+    },
+    {
+        "id": 5,
+        "title": "Pollera",
+        "description": "Pollera rosa",
+        "price": 16009,
+      "thumbnail": [
+        "https://www.oestecomic.com.ar/polleras/pollera-rosa"
+      ],
+      "code": 987543,
+      "stock": 15,
+      "status": true,
+      "category": "Polleras"
+    },
+    {
+      "id": 6,
+      "title": "Cargo",
+      "description": "Cargo negro",
+      "price": 23640,
+      "thumbnail": [
+        "https://www.mohamedsgo.com/inicio/2680-11299-jogger-cargo-negro-hilo-blanco.html"
+      ],
+      "code": 821395,
+      "stock": 16,
+      "status": true,
+      "category": "Pantalones"
+    }
+  ]
