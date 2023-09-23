@@ -1,21 +1,22 @@
 import fs from "fs/promises";
+import { Product } from "./ent/Product.js";
 
 export default class ProductManager {
   id = 0;
   constructor() {
-    this.path = "./src/db/products.json";
-    this.productos = [];
+    this.products = [];
+    this.path = "../src/db/products.json";
     this.loadData();
   }
 
   async loadData() {
     try {
       const json = await fs.readFile(this.path, "utf-8");
-      this.productos = JSON.parse(json);
-      if (this.productos.length < 1) {
+      this.products = JSON.parse(json);
+      if (this.products.length < 1) {
         this.id = 1;
       } else {
-        this.id = this.productos[this.productos.length - 1].id + 1;
+        this.id = this.products[this.products.length - 1].id + 1;
       }
     } catch {
       console.log(`el archivo ${this.path} no existe, creando...`);
@@ -26,16 +27,49 @@ export default class ProductManager {
 
   getProducts = async () => {
     const json = await fs.readFile(this.path, "utf-8");
-    this.productos = JSON.parse(json);
-    return this.productos;
+    this.products = JSON.parse(json);
+    return this.products;
   };
 
   async addProduct(product) {
     const json = await fs.readFile(this.path, "utf-8");
-    this.productos = JSON.parse(json);
-    const { title, description, price, thumbnail, code, stock } = product;
+    this.products = JSON.parse(json);
 
-    const itsValid = this.productos.some(
+    const {
+      title,
+      description,
+      price,
+      thumbnail,
+      code,
+      stock,
+      status = true,
+      category,
+    } = product;
+
+    if (
+      title === "" ||
+      description === "" ||
+      price === "" ||
+      code === "" ||
+      stock === "" ||
+      category === ""
+    ) {
+      return "Los campos son obligatorios";
+    }
+
+    const productn = new Product(
+      title,
+      description,
+      price,
+      thumbnail,
+      code,
+      stock,
+      status,
+      category
+    );
+    console.log(productn);
+
+    const itsValid = this.products.some(
       (productFind) => productFind.code === code
     );
     if (itsValid) {
@@ -43,23 +77,27 @@ export default class ProductManager {
       return;
     }
 
-    const productn = new Product(product);
+    
 
-    this.productos.push({
+    this.products.push({
       id: this.id++,
       ...productn,
     });
 
-    const newProduct = JSON.stringify(this.productos, null, 2);
+    const newProduct = JSON.stringify(this.products, null, 2);
     await fs.writeFile(this.path, newProduct);
 
-    return `producto ${title} ingresado correctamente`;
+    return {
+      id: this.id - 1,
+      msg: `producto ${title} ingresado correctamente`,
+    };
   }
 
   async getProductById(id) {
     const json = await fs.readFile(this.path, "utf-8");
-    this.productos = JSON.parse(json);
-    const getProduct = this.productos.find((prod) => prod.id === id);
+    this.products = JSON.parse(json);
+
+    const getProduct = this.products.find((prod) => prod.id === Number(id));
     if (getProduct) {
       return getProduct;
     }
@@ -67,17 +105,21 @@ export default class ProductManager {
   }
   async updateProduct(id, product) {
     const json = await fs.readFile(this.path, "utf-8");
-    this.productos = JSON.parse(json);
-    const { title, description, price, thumbnail, code, stock } = product;
+    this.products = JSON.parse(json);
+    const { title, description, price, thumbnail, code, stock, category } =
+      product;
 
-    const itsValid = this.productos.some((productFind) => productFind.id === id);
+    const itsValid = this.products.some(
+      (productFind) => productFind.id === Number(id)
+    );
+
     if (!itsValid) {
       console.log(`ERROR: ID in use in ${product.title}`);
       return;
     }
 
-    let update = this.productos.map((p) => {
-      if (p.id === id) {
+    let update = this.products.map((p) => {
+      if (p.id === Number(id)) {
         return { ...p, ...product };
       }
       return p;
@@ -87,28 +129,17 @@ export default class ProductManager {
 
   async deleteProduct(id) {
     const json = await fs.readFile(this.path, "utf-8");
-    this.productos = JSON.parse(json);
-    const index = this.productos.findIndex((producto) => producto.id === id);
+    this.products = JSON.parse(json);
+    const index = this.products.findIndex(
+      (producto) => producto.id === Number(id)
+    );
     if (index < 0) {
       return "Producto Not found";
     }
 
-    this.productos.splice(index, 1);
-    const newProducto = JSON.stringify(this.productos);
+    this.products.splice(index, 1);
+    const newProducto = JSON.stringify(this.products);
     await fs.writeFile(this.path, newProducto);
     return "Producto Eliminado Exitosamente";
   }
 }
-
-class Product {
-  constructor(product) {
-    const { title, description, price, thumbnail, code, stock } = product;
-    this.title = title;
-    this.description = description;
-    this.price = price;
-    this.thumbnail = thumbnail;
-    this.code = code;
-    this.stock = stock;
-  }
-}
-const productManager = new ProductManager();

@@ -1,36 +1,33 @@
 import express from "express";
-import ProductManager from "./src/ProductManager";
+import { productsRouter } from "./routes/products.routes.js";
+import { cartRouter } from "./routes/carts.routes.js";
+import { engine } from "express-handlebars";
+import { viewRouter } from "./routes/views.routes.js";
+import { Server } from "socket.io";
 
 const app = express();
-const manager = new ProductManager('products.json');
+app.use(express.json());
 
-app.get("/productos", async (req, res) => {
-  const { limit } = req.query;
-  const productos = await manager.getProducts();
-  if (limit) {
-    res.send(productos.splice(0, +limit));
-  } else {
-    res.send(productos);
-  }
+app.use("/src/public", express.static("./src/public"));
+app.engine("handlebars", engine());
+app.set("view engine", "handlebars");
+app.set("views", "./src/views");
+
+app.use("/", viewRouter);
+app.use("/api/products", productsRouter);
+app.use("/api/carts", cartRouter);
+
+const appServer = app.listen(8080, () => {
+  console.log("server runnung 8080");
 });
 
-app.get("/products/:id", async (req, res) => {
-  try {
-    const productId = parseInt(req.params.pid);
-    const product = await productManager.getProductById(productId);
+const socketServer = new Server(appServer);
 
-    if (product) {
-      res.json(product);
-    } else {
-      res.status(404).json({ error: 'Product not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: ' server error' });
-  }
-});
+socketServer.on("connection", (socket) => {
+  console.log("nuevo cliente conectado");
+  socket.on("message", (data) => {
+    console.log(data);
+  });
 
-const PORT = 3000;
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  socketServer.emit("messageAll", "Bienvenidos");
 });
